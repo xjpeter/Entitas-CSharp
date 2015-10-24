@@ -5,54 +5,7 @@ using NSpec;
 class describe_SystemExtensionsGenerator : nspec {
 
     const string classSuffix = "GeneratedExtension";
-
-    const string system = @"namespace Entitas {
-    public partial class Pool {
-        public ISystem CreateTestSystem() {
-            return this.CreateSystem<TestSystem>();
-        }
-    }
-}";
-
-    const string initializeSystem = @"namespace Entitas {
-    public partial class Pool {
-        public ISystem CreateTestInitializeSystem() {
-            return this.CreateSystem<TestInitializeSystem>();
-        }
-    }
-}";
-
-    const string executeSystem = @"namespace Entitas {
-    public partial class Pool {
-        public ISystem CreateTestExecuteSystem() {
-            return this.CreateSystem<TestExecuteSystem>();
-        }
-    }
-}";
-
-    const string initializeExecuteSystem = @"namespace Entitas {
-    public partial class Pool {
-        public ISystem CreateTestInitializeExecuteSystem() {
-            return this.CreateSystem<TestInitializeExecuteSystem>();
-        }
-    }
-}";
-
-    const string reactiveSystem = @"namespace Entitas {
-    public partial class Pool {
-        public ISystem CreateTestReactiveSystem() {
-            return this.CreateSystem<TestReactiveSystem>();
-        }
-    }
-}";
-
-    const string namespaceSystem = @"namespace Entitas {
-    public partial class Pool {
-        public ISystem CreateNamespaceSystem() {
-            return this.CreateSystem<Tests.NamespaceSystem>();
-        }
-    }
-}";
+    bool logResults = false;
 
     void generates<T>(string expectedCode) {
         expectedCode = expectedCode.ToUnixLineEndings();
@@ -60,6 +13,12 @@ class describe_SystemExtensionsGenerator : nspec {
         var files = new SystemExtensionsGenerator().Generate(new [] { type });
         files.Length.should_be(1);
         var file = files[0];
+
+        if (logResults) {
+            Console.WriteLine("should:\n" + expectedCode);
+            Console.WriteLine("was:\n" + file.fileContent);
+        }
+
         file.fileName.should_be(type + classSuffix);
         file.fileContent.should_be(expectedCode);
     }
@@ -69,6 +28,54 @@ class describe_SystemExtensionsGenerator : nspec {
         var files = new SystemExtensionsGenerator().Generate(new [] { type });
         files.Length.should_be(0);
     }
+
+    const string system = @"namespace Entitas {
+    public partial class Pool {
+        public Entitas.ISystem CreateTestSystem() {
+            return this.CreateSystem<TestSystem>();
+        }
+    }
+}";
+
+    const string initializeSystem = @"namespace Entitas {
+    public partial class Pool {
+        public Entitas.ISystem CreateTestInitializeSystem() {
+            return this.CreateSystem<TestInitializeSystem>();
+        }
+    }
+}";
+
+    const string executeSystem = @"namespace Entitas {
+    public partial class Pool {
+        public Entitas.ISystem CreateTestExecuteSystem() {
+            return this.CreateSystem<TestExecuteSystem>();
+        }
+    }
+}";
+
+    const string initializeExecuteSystem = @"namespace Entitas {
+    public partial class Pool {
+        public Entitas.ISystem CreateTestInitializeExecuteSystem() {
+            return this.CreateSystem<TestInitializeExecuteSystem>();
+        }
+    }
+}";
+
+    const string reactiveSystem = @"namespace Entitas {
+    public partial class Pool {
+        public Entitas.ISystem CreateTestReactiveSystem() {
+            return this.CreateSystem<TestReactiveSystem>();
+        }
+    }
+}";
+
+    const string namespaceSystem = @"namespace Entitas {
+    public partial class Pool {
+        public Entitas.ISystem CreateNamespaceSystem() {
+            return this.CreateSystem<Tests.NamespaceSystem>();
+        }
+    }
+}";
 
     void when_generating() {
         it["System"] = () => generates<TestSystem>(system);

@@ -8,25 +8,23 @@ namespace Entitas.CodeGenerator {
 
         const string CLASS_SUFFIX = "GeneratedExtension";
 
-        const string CLASS_TEMPLATE = @"namespace Entitas {{
-    public partial class Pool {{
-        public ISystem Create{0}() {{
-            return this.CreateSystem<{1}>();
-        }}
-    }}
-}}";
-
         public CodeGenFile[] Generate(Type[] systems) {
             return systems
                     .Where(type => type.GetConstructor(new Type[0]) != null)
                     .Aggregate(new List<CodeGenFile>(), (files, type) => {
+                        var fileContent = new CSharpFileBuilder();
+                        fileContent.AddNamespace("Entitas")
+                            .AddClass("Pool").AddModifier(AccessModifiers.Public).AddModifier(Modifiers.Partial)
+                                .AddMethod("Create" + type.Name, "return this.CreateSystem<" + type + ">();")
+                                    .AddModifier(AccessModifiers.Public).SetReturnType(typeof(ISystem));
+
                         files.Add(new CodeGenFile {
                             fileName = type + CLASS_SUFFIX,
-                            fileContent = string.Format(CLASS_TEMPLATE, type.Name, type).ToUnixLineEndings()
+                            fileContent = fileContent.ToString().ToUnixLineEndings()
                         });
+
                         return files;
-                        })
-                    .ToArray();
+                    }).ToArray();
         }
     }
 }
