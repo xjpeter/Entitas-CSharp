@@ -29,6 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Boo.Lang, Version=2.0.9.5, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -48,12 +49,16 @@
     <Compile Include="Entitas.CodeGenerator\ISystemCodeGenerator.cs" />
     <Compile Include="Entitas.CodeGenerator\Generators\SystemExtensionsGenerator.cs" />
     <Compile Include="Entitas.CodeGenerator\ICodeGenerator.cs" />
+    <Compile Include="Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilder.cs" />
+    <Compile Include="Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilderToString.cs" />
+    <Compile Include="Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilderDescriptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Entitas.CodeGenerator\" />
     <Folder Include="Entitas.CodeGenerator\Generators\" />
     <Folder Include="Entitas.CodeGenerator\Attributes\" />
+    <Folder Include="Entitas.CodeGenerator\CSharpFileBuilder\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Entitas\Entitas.csproj">

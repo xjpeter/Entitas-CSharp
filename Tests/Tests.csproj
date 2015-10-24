@@ -135,6 +135,7 @@
     <Compile Include="..\Entitas.Unity.VisualDebugging\Assets\Entitas.Unity.VisualDebugging\Editor\VisualDebuggingConfig.cs">
       <Link>Libraries\Entitas.Unity.VisualDebugging\VisualDebuggingConfig.cs</Link>
     </Compile>
+    <Compile Include="Tests\Entitas.CodeGenerator\describe_CSharpFileBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
