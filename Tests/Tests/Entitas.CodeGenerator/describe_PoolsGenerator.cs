@@ -4,7 +4,7 @@ using NSpec;
 
 class describe_PoolsGenerator : nspec {
 
-    bool logResults = !false;
+    bool logResults = false;
 
     const string defaultPool = @"public static class Pools {
     public static Entitas.Pool[] allPools {

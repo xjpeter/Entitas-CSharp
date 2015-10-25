@@ -11,14 +11,10 @@ class describe_PoolAttributeGenerator : nspec {
             files.Length.should_be(1);
             files.Any(f => f.fileName == "MetaGameAttribute").should_be_true();
             var file = files.First(f => f.fileName == "MetaGameAttribute");
-            file.fileContent.should_be(@"using Entitas.CodeGenerator;
-
-public class MetaGameAttribute : PoolAttribute {
+            file.fileContent.should_be(@"public class MetaGameAttribute : Entitas.CodeGenerator.PoolAttribute {
     public MetaGameAttribute() : base(""MetaGame"") {
     }
-}
-
-".ToUnixLineEndings());
+}".ToUnixLineEndings());
         };
 
 
@@ -30,14 +26,10 @@ public class MetaGameAttribute : PoolAttribute {
             files.Any(f => f.fileName == "UIAttribute").should_be_true();
             
             var file = files.First(f => f.fileName == "UIAttribute");
-            file.fileContent.should_be(@"using Entitas.CodeGenerator;
-
-public class UIAttribute : PoolAttribute {
+            file.fileContent.should_be(@"public class UIAttribute : Entitas.CodeGenerator.PoolAttribute {
     public UIAttribute() : base(""UI"") {
     }
-}
-
-".ToUnixLineEndings());
+}".ToUnixLineEndings());
         };
     }
 }
