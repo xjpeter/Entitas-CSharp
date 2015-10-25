@@ -73,7 +73,7 @@ namespace MyNamespace {
                 aNamespace = cb.AddNamespace("MyNamespace");
             };
 
-            it["adds and indents a class"] = () => {
+            it["adds a class"] = () => {
                 aNamespace.AddClass("MyClass");
                 generates(cb, @"namespace MyNamespace {
     class MyClass {
@@ -81,7 +81,7 @@ namespace MyNamespace {
 }");
             };
 
-            it["adds and indents multiple classes"] = () => {
+            it["adds multiple classes"] = () => {
                 aNamespace.AddClass("MyClass1");
                 aNamespace.AddClass("MyClass2");
                 generates(cb, @"namespace MyNamespace {
@@ -100,10 +100,30 @@ namespace MyNamespace {
                     cd = aNamespace.AddClass("MyClass");
                 };
 
-                it["sets modifiers"] = () => {
+                it["adds modifiers"] = () => {
                     cd.AddModifier(AccessModifiers.Public).AddModifier(Modifiers.Static);
                     generates(cb, @"namespace MyNamespace {
     public static class MyClass {
+    }
+}");
+                };
+
+                it["adds a property"] = () => {
+                    cd.AddProperty(typeof(string), "name");
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        string name { get; set; }
+    }
+}");
+                };
+
+                it["adds multiple properties"] = () => {
+                    cd.AddProperty(typeof(string), "name");
+                    cd.AddProperty(typeof(int), "age");
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        string name { get; set; }
+        int age { get; set; }
     }
 }");
                 };
@@ -163,6 +183,98 @@ System.Console.WriteLine(str);");
 }");
                 };
 
+                context["when property added"] = () => {
+
+                    PropertyDescription pd = null;
+                    before = () => {
+                        pd = cd.AddProperty(typeof(int), "age");
+                    };
+
+                    it["adds modifiers"] = () => {
+                        pd.AddModifier(AccessModifiers.Public);
+                        pd.AddModifier(Modifiers.Virtual);
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        public virtual int age { get; set; }
+    }
+}");
+                    };
+
+                    it["sets getter"] = () => {
+                        pd.SetGetter("var a = 42;\nreturn a;");
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        int age {
+            get {
+                var a = 42;
+                return a;
+            }
+        }
+    }
+}");
+                    };
+
+                    it["sets setter"] = () => {
+                        pd.SetSetter("var newAge = value;\n_age = newAge;");
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        int age {
+            set {
+                var newAge = value;
+                _age = newAge;
+            }
+        }
+    }
+}");
+                    };
+
+                    it["sets getter and setter"] = () => {
+                        pd.SetGetter("var a = 42;\nreturn a;");
+                        pd.SetSetter("var newAge = value;\n_age = newAge;");
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        int age {
+            get {
+                var a = 42;
+                return a;
+            }
+            set {
+                var newAge = value;
+                _age = newAge;
+            }
+        }
+    }
+}");
+                    };
+
+                    it["adds a field"] = () => {
+                        cd.AddField(typeof(string), "_name");
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        int age { get; set; }
+
+        string _name;
+    }
+}");
+                    };
+
+                    it["adds a method"] = () => {
+                        cd.AddMethod("MyMethod", @"var str = ""Hello"";
+System.Console.WriteLine(str);");
+                        
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        int age { get; set; }
+
+        void MyMethod() {
+            var str = ""Hello"";
+            System.Console.WriteLine(str);
+        }
+    }
+}");
+                    };
+                };
+
                 context["when field added"] = () => {
 
                     FieldDescription fd = null;
@@ -170,7 +282,7 @@ System.Console.WriteLine(str);");
                         fd = cd.AddField(typeof(string), "version");
                     };
 
-                    it["sets modifiers"] = () => {
+                    it["adds modifiers"] = () => {
                         fd.AddModifier(AccessModifiers.Public).AddModifier(Modifiers.Const);
                         generates(cb, @"namespace MyNamespace {
     class MyClass {
@@ -212,7 +324,7 @@ System.Console.WriteLine(str);");
                         md = cd.AddMethod("MyMethod", "var str = \"Hello\";\nSystem.Console.WriteLine(str);");
                     };
 
-                    it["sets modiefiers"] = () => {
+                    it["adds modiefiers"] = () => {
                         md.AddModifier(AccessModifiers.Public).AddModifier(Modifiers.Override);
                         generates(cb, @"namespace MyNamespace {
     class MyClass {

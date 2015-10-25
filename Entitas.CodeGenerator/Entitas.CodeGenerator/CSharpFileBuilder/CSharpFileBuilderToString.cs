@@ -42,14 +42,19 @@ namespace Entitas.CodeGenerator {
         static string getClasses(NamespaceDescription nsd) {
             const string FORMAT = @"{0}class {1}";
             var classes = nsd.classDescriptions.Aggregate(new List<string>(), (list, cd) => {
+                var properties = getProperties(cd);
                 var fields = getFields(cd);
                 var methods = getMethods(cd);
 
-                var body = fields;
+                var body = properties;
+                if (!string.IsNullOrEmpty(body) && !string.IsNullOrEmpty(fields)) {
+                    body += "\n\n";
+                }
+                body += fields;
+
                 if (!string.IsNullOrEmpty(body) && !string.IsNullOrEmpty(methods)) {
                     body += "\n\n";
                 }
-
                 body += methods;
 
                 list.Add(codeBlock(string.Format(FORMAT, getModifiers(cd.modifiers), cd.name), body));
@@ -57,6 +62,37 @@ namespace Entitas.CodeGenerator {
             }).ToArray();
 
             return string.Join("\n\n", classes);
+        }
+
+        static string getProperties(ClassDescription cd) {
+            if (cd.propertyDescriptions.Length == 0) {
+                return string.Empty;
+            }
+
+            const string FORMAT_DEFAULT = @"{0}{1} {2} {{ get; set; }}";
+            const string FORMAT = @"{0}{1} {2}";
+
+            var properties = cd.propertyDescriptions.Aggregate(new List<string>(), (list, pd) => {
+                var type = TypeGenerator.Generate(pd.type);
+                if (!string.IsNullOrEmpty(pd.getter)) {
+                    if (!string.IsNullOrEmpty(pd.setter)) {
+                        list.Add(codeBlock(string.Format(FORMAT, getModifiers(pd.modifiers), type, pd.name),
+                            codeBlock("get", pd.getter) + "\n" + codeBlock("set", pd.setter)));
+                    } else {
+                        list.Add(codeBlock(string.Format(FORMAT, getModifiers(pd.modifiers), type, pd.name),
+                            codeBlock("get", pd.getter)));
+                    }
+                } else if (!string.IsNullOrEmpty(pd.setter)) {
+                    list.Add(codeBlock(string.Format(FORMAT, getModifiers(pd.modifiers), type, pd.name),
+                        codeBlock("set", pd.setter)));
+                } else {
+                    list.Add(string.Format(FORMAT_DEFAULT, getModifiers(pd.modifiers), type, pd.name));
+                }
+
+                return list;
+            }).ToArray();
+
+            return string.Join("\n", properties);
         }
 
         static string getFields(ClassDescription cd) {
@@ -91,11 +127,7 @@ namespace Entitas.CodeGenerator {
                     ? TypeGenerator.Generate(typeof(void))
                     : TypeGenerator.Generate(md.returnType);
 
-                var parameters = getParameters(md);
-
-
-                list.Add(codeBlock(string.Format(FORMAT, getModifiers(md.modifiers), returnType, md.name, parameters), md.body));
-
+                list.Add(codeBlock(string.Format(FORMAT, getModifiers(md.modifiers), returnType, md.name, getParameters(md)), md.body));
                 return list;
             }).ToArray();
 

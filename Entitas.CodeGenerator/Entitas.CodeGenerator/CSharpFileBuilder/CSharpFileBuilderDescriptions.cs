@@ -54,16 +54,19 @@ namespace Entitas.CodeGenerator {
     public class ClassDescription {
         public string name { get { return _name; } }
         public string[] modifiers { get { return _modifiers.ToArray(); } }
+        public PropertyDescription[] propertyDescriptions { get { return _propertyDescriptions.ToArray(); } }
         public FieldDescription[] fieldDescriptions { get { return _fieldDescriptions.ToArray(); } }
         public MethodDescription[] methodDescriptions { get { return _methodDescriptions.ToArray(); } }
 
         readonly string _name;
         readonly List<string> _modifiers;
+        readonly List<PropertyDescription> _propertyDescriptions;
         readonly List<FieldDescription> _fieldDescriptions;
         readonly List<MethodDescription> _methodDescriptions;
 
         public ClassDescription(string name) {
             _name = name;
+            _propertyDescriptions = new List<PropertyDescription>();
             _fieldDescriptions = new List<FieldDescription>();
             _methodDescriptions = new List<MethodDescription>();
             _modifiers = new List<string>();
@@ -72,6 +75,12 @@ namespace Entitas.CodeGenerator {
         public ClassDescription AddModifier(string modifier) {
             _modifiers.Add(modifier);
             return this;
+        }
+
+        public PropertyDescription AddProperty(Type type, string name) {
+            var propertyDescription = new PropertyDescription(type, name);
+            _propertyDescriptions.Add(propertyDescription);
+            return propertyDescription;
         }
 
         public FieldDescription AddField(Type type, string name) {
@@ -84,6 +93,41 @@ namespace Entitas.CodeGenerator {
             var methodDescription = new MethodDescription(name, body);
             _methodDescriptions.Add(methodDescription);
             return methodDescription;
+        }
+    }
+
+    public class PropertyDescription {
+        public Type type { get { return _type; } }
+        public string name { get { return _name; } }
+        public string[] modifiers { get { return _modifiers.ToArray(); } }
+        public string getter { get { return _getter; } }
+        public string setter { get { return _setter; } }
+
+        readonly Type _type;
+        readonly string _name;
+        readonly List<string> _modifiers;
+        string _getter;
+        string _setter;
+
+        public PropertyDescription(Type type, string name) {
+            _type = type;
+            _name = name;
+            _modifiers = new List<string>();
+        }
+
+        public PropertyDescription AddModifier(string modifier) {
+            _modifiers.Add(modifier);
+            return this;
+        }
+
+        public PropertyDescription SetGetter(string body) {
+            _getter = body;
+            return this;
+        }
+
+        public PropertyDescription SetSetter(string body) {
+            _setter = body;
+            return this;
         }
     }
 
