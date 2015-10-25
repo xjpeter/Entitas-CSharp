@@ -171,6 +171,15 @@
     <Compile Include="..\Entitas\Entitas\Extensions\IMatcherExtension.cs">
       <Link>Libraries\Entitas\Extensions\IMatcherExtension.cs</Link>
     </Compile>
+    <Compile Include="..\Entitas.CodeGenerator\Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilder.cs">
+      <Link>Libraries\Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Entitas.CodeGenerator\Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilderDescriptions.cs">
+      <Link>Libraries\Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilderDescriptions.cs</Link>
+    </Compile>
+    <Compile Include="..\Entitas.CodeGenerator\Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilderToString.cs">
+      <Link>Libraries\Entitas.CodeGenerator\CSharpFileBuilder\CSharpFileBuilderToString.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -179,5 +188,6 @@
     <Folder Include="Readme\Generated\" />
     <Folder Include="Libraries\Entitas\" />
     <Folder Include="Libraries\Entitas.CodeGenerator\" />
+    <Folder Include="Libraries\Entitas.CodeGenerator\CSharpFileBuilder\" />
   </ItemGroup>
 </Project>

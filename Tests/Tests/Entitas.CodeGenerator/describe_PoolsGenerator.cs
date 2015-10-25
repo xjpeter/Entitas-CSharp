@@ -4,15 +4,10 @@ using NSpec;
 
 class describe_PoolsGenerator : nspec {
 
-    bool logResults = false;
+    bool logResults = !false;
 
-    const string defaultPool = @"using Entitas;
-
-public static class Pools {
-
-    static Pool[] _allPools;
-
-    public static Pool[] allPools {
+    const string defaultPool = @"public static class Pools {
+    public static Entitas.Pool[] allPools {
         get {
             if (_allPools == null) {
                 _allPools = new [] { pool };
@@ -21,10 +16,7 @@ public static class Pools {
             return _allPools;
         }
     }
-
-    static Pool _pool;
-
-    public static Pool pool {
+    public static Entitas.Pool pool {
         get {
             if (_pool == null) {
                 _pool = new Pool(ComponentIds.TotalComponents);
@@ -37,15 +29,13 @@ public static class Pools {
             return _pool;
         }
     }
+
+    static Entitas.Pool[] _allPools;
+    static Entitas.Pool _pool;
 }";
 
-    const string metaPool = @"using Entitas;
-
-public static class Pools {
-
-    static Pool[] _allPools;
-
-    public static Pool[] allPools {
+    const string metaPool = @"public static class Pools {
+    public static Entitas.Pool[] allPools {
         get {
             if (_allPools == null) {
                 _allPools = new [] { meta };
@@ -54,10 +44,7 @@ public static class Pools {
             return _allPools;
         }
     }
-
-    static Pool _meta;
-
-    public static Pool meta {
+    public static Entitas.Pool meta {
         get {
             if (_meta == null) {
                 _meta = new Pool(MetaComponentIds.TotalComponents);
@@ -70,15 +57,13 @@ public static class Pools {
             return _meta;
         }
     }
+
+    static Entitas.Pool[] _allPools;
+    static Entitas.Pool _meta;
 }";
 
-    const string metaCorePool = @"using Entitas;
-
-public static class Pools {
-
-    static Pool[] _allPools;
-
-    public static Pool[] allPools {
+    const string metaCorePool = @"public static class Pools {
+    public static Entitas.Pool[] allPools {
         get {
             if (_allPools == null) {
                 _allPools = new [] { meta, core };
@@ -87,10 +72,7 @@ public static class Pools {
             return _allPools;
         }
     }
-
-    static Pool _meta;
-
-    public static Pool meta {
+    public static Entitas.Pool meta {
         get {
             if (_meta == null) {
                 _meta = new Pool(MetaComponentIds.TotalComponents);
@@ -103,10 +85,7 @@ public static class Pools {
             return _meta;
         }
     }
-
-    static Pool _core;
-
-    public static Pool core {
+    public static Entitas.Pool core {
         get {
             if (_core == null) {
                 _core = new Pool(CoreComponentIds.TotalComponents);
@@ -119,6 +98,10 @@ public static class Pools {
             return _core;
         }
     }
+
+    static Entitas.Pool[] _allPools;
+    static Entitas.Pool _meta;
+    static Entitas.Pool _core;
 }";
 
     void generates(string[] poolNames, string fileContent) {
