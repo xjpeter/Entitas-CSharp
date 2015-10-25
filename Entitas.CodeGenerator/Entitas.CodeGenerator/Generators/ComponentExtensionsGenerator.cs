@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Entitas.CodeGenerator {
     public class ComponentExtensionsGenerator : IComponentCodeGenerator {
 
-        const string CLASS_SUFFIX = "GeneratedExtension";
-
         public CodeGenFile[] Generate(Type[] components) {
             return components
                     .Where(shouldGenerate)
-                    .Aggregate(new List<CodeGenFile>(), (files, type) => {
-                        files.Add(new CodeGenFile {
-                            fileName = type + CLASS_SUFFIX,
+                    .Select(type => new CodeGenFile {
+                            fileName = type + CodeGenerator.CLASS_SUFFIX,
                             fileContent = generateComponentExtension(type).ToUnixLineEndings()
-                        });
-                        return files;
-                    }).ToArray();
+                        }).ToArray();
         }
 
         static bool shouldGenerate(Type type) {
@@ -26,9 +20,9 @@ namespace Entitas.CodeGenerator {
         }
 
         static string generateComponentExtension(Type type) {
-            return type.PoolNames().Length == 0
-                        ? addDefaultPoolCode(type)
-                        : addCustomPoolCode(type);
+            return type.GetAssociatedPoolNames().Length == 0
+                ? addDefaultPoolCode(type)
+                : addCustomPoolCode(type);
         }
 
         static string addDefaultPoolCode(Type type) {
@@ -283,7 +277,7 @@ $assign
         }
     }
 ";
-            var poolNames = type.PoolNames();
+            var poolNames = type.GetAssociatedPoolNames();
             if (poolNames.Length == 0) {
                 return buildString(type, MATCHER_FORMAT);
             }
@@ -316,9 +310,9 @@ $assign
             var a0_type = type;
             var a1_name = type.RemoveComponentSuffix();
             var a2_lowercaseName = a1_name.LowercaseFirst();
-            var poolNames = type.PoolNames();
+            var poolNames = type.GetAssociatedPoolNames();
             var a3_tag = poolNames.Length == 0 ? string.Empty : poolNames[0];
-            var lookupTags = type.IndicesLookupTags();
+            var lookupTags = type.GetAssociatedIndicesLookupTags();
             var a4_ids = lookupTags.Length == 0 ? string.Empty : lookupTags[0];
             var memberNameInfos = getFieldInfos(type);
             var a5_fieldNamesWithType = fieldNamesWithType(memberNameInfos);

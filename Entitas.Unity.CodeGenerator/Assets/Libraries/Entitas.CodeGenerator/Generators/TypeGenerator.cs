@@ -20,7 +20,8 @@ namespace Entitas.CodeGenerator {
             { "System.Object", "object" },
             { "System.Int16", "short" },
             { "System.UInt16", "ushort" },
-            { "System.String", "string" }
+            { "System.String", "string" },
+            { "System.Void", "void" }
         };
 
         public static string Generate(Type type) {
@@ -49,12 +50,7 @@ namespace Entitas.CodeGenerator {
         }
 
         static string generateArrayString(Type type) {
-            var rankString = string.Empty;
-            for (int i = 0; i < type.GetArrayRank() - 1; i++) {
-                rankString += ",";
-            }
-
-            return Generate(type.GetElementType()) + "[" + rankString + "]";
+            return Generate(type.GetElementType()) + "[" + new string(',', type.GetArrayRank() - 1) + "]";
         }
     }
 }

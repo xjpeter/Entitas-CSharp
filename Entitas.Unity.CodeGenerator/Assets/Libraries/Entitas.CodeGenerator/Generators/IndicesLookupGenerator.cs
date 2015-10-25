@@ -8,12 +8,9 @@ namespace Entitas.CodeGenerator {
         public CodeGenFile[] Generate(Type[] components) {
             var sortedComponents = components.OrderBy(type => type.ToString()).ToArray();
             return getLookups(sortedComponents)
-                .Aggregate(new List<CodeGenFile>(), (files, lookup) => {
-                    files.Add(new CodeGenFile {
-                        fileName = lookup.Key,
-                        fileContent = generateIndicesLookup(lookup.Key, lookup.Value.ToArray()).ToUnixLineEndings()
-                    });
-                    return files;
+                .Select(lookup => new CodeGenFile {
+                    fileName = lookup.Key,
+                    fileContent = generateIndicesLookup(lookup.Key, lookup.Value.ToArray()).ToUnixLineEndings()
                 }).ToArray();
         }
 
@@ -23,13 +20,12 @@ namespace Entitas.CodeGenerator {
                 poolNames = new [] { string.Empty };
             }
             return poolNames
-                .Aggregate(new List<CodeGenFile>(), (files, poolName) => {
+                .Select(poolName => {
                     var lookupTag = poolName + CodeGenerator.DEFAULT_INDICES_LOOKUP_TAG;
-                    files.Add(new CodeGenFile {
+                    return new CodeGenFile {
                         fileName = lookupTag,
                         fileContent = generateIndicesLookup(lookupTag, noTypes).ToUnixLineEndings()
-                    });
-                    return files;
+                    };
                 }).ToArray();
         }
 
@@ -37,10 +33,7 @@ namespace Entitas.CodeGenerator {
             var currentIndex = 0;
             var orderedComponents = components
                 .Where(shouldGenerate)
-                .Aggregate(new Dictionary<Type, string[]>(), (acc, type) => {
-                    acc.Add(type, type.IndicesLookupTags());
-                    return acc;
-                })
+                .ToDictionary(type => type, type => type.GetAssociatedIndicesLookupTags())
                 .OrderByDescending(kv => kv.Value.Length);
 
             return orderedComponents

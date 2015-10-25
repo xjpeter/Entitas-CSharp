@@ -25,7 +25,8 @@ return _{0};";
             var hasPools = poolNames == null || poolNames.Length == 0;
 
             var fileContent = new CSharpFileBuilder();
-            var cd = fileContent.NoNamespace().AddClass("Pools").AddModifier(AccessModifiers.Public).AddModifier(Modifiers.Static);
+            var cd = fileContent.NoNamespace()
+                .AddClass("Pools").AddModifier(AccessModifiers.Public).AddModifier(Modifiers.Static);
 
             var allPoolNames = hasPools
                 ? DEFAULT_POOL_NAME

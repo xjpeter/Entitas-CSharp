@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -7,10 +6,11 @@ namespace Entitas.CodeGenerator {
     public static class CodeGenerator {
         public const string COMPONENT_SUFFIX = "Component";
         public const string DEFAULT_INDICES_LOOKUP_TAG = "ComponentIds";
+        public const string CLASS_SUFFIX = "GeneratedExtension";
 
         public static void Generate(Type[] types, string[] poolNames, string dir, ICodeGenerator[] codeGenerators) {
             dir = GetSafeDir(dir);
-            CleanDir(dir);
+            cleanDir(dir);
             
             foreach (var generator in codeGenerators.OfType<IPoolCodeGenerator>()) {
                 writeFiles(dir, generator.Generate(poolNames));
@@ -34,10 +34,11 @@ namespace Entitas.CodeGenerator {
             if (!dir.EndsWith("Generated/", StringComparison.Ordinal)) {
                 dir += "Generated/";
             }
+
             return dir;
         }
 
-        public static void CleanDir(string dir) {
+        static void cleanDir(string dir) {
             dir = GetSafeDir(dir);
             if (Directory.Exists(dir)) {
                 var files = new DirectoryInfo(dir).GetFiles("*.cs", SearchOption.AllDirectories);
@@ -80,27 +81,21 @@ namespace Entitas.CodeGenerator {
 
     public static class CodeGeneratorExtensions {
         public static string RemoveComponentSuffix(this Type type) {
-            return type.Name.EndsWith(CodeGenerator.COMPONENT_SUFFIX)
-                        ? type.Name.Substring(0, type.Name.Length - CodeGenerator.COMPONENT_SUFFIX.Length)
-                        : type.Name;
+            return type.Name.EndsWith(CodeGenerator.COMPONENT_SUFFIX, StringComparison.Ordinal)
+                ? type.Name.Substring(0, type.Name.Length - CodeGenerator.COMPONENT_SUFFIX.Length)
+                : type.Name;
         }
 
-        public static string[] PoolNames(this Type type) {
+        public static string[] GetAssociatedPoolNames(this Type type) {
             return Attribute.GetCustomAttributes(type)
-                .Aggregate(new List<string>(), (poolNames, attr) => {
-                    var poolAttribute = attr as PoolAttribute;
-                    if (poolAttribute != null) {
-                        poolNames.Add(poolAttribute.tag);
-                    }
-
-                    return poolNames;
-                })
+                .Where(attr => attr as PoolAttribute != null)
+                .Select(attr => ((PoolAttribute)attr).tag)
                 .OrderBy(poolName => poolName)
                 .ToArray();
         }
 
-        public static string[] IndicesLookupTags(this Type type) {
-            var poolNames = type.PoolNames();
+        public static string[] GetAssociatedIndicesLookupTags(this Type type) {
+            var poolNames = type.GetAssociatedPoolNames();
             if (poolNames.Length == 0) {
                 return new [] { CodeGenerator.DEFAULT_INDICES_LOOKUP_TAG };
             }
