@@ -1,6 +1,7 @@
 ﻿using System;
 using Entitas.CodeGenerator;
 using NSpec;
+using Entitas;
 
 class describe_CSharpFileBuilder : nspec {
 
@@ -108,11 +109,82 @@ namespace MyNamespace {
 }");
                 };
 
+                it["sets base class"] = () => {
+                    cd.SetBaseClass(typeof(PoolAttribute));
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass : Entitas.CodeGenerator.PoolAttribute {
+    }
+}");
+                };
+
+                it["adds an interface"] = () => {
+                    cd.AddInterface(typeof(ISystem));
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass : Entitas.ISystem {
+    }
+}");
+                };
+
+                it["adds multiple interfaces"] = () => {
+                    cd.AddInterface(typeof(ISystem));
+                    cd.AddInterface(typeof(IExecuteSystem));
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass : Entitas.ISystem, Entitas.IExecuteSystem {
+    }
+}");
+                };
+
+                it["adds base class and interfaces"] = () => {
+                    cd.SetBaseClass(typeof(PoolAttribute));
+                    cd.AddInterface(typeof(ISystem));
+                    cd.AddInterface(typeof(IExecuteSystem));
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass : Entitas.CodeGenerator.PoolAttribute, Entitas.ISystem, Entitas.IExecuteSystem {
+    }
+}");
+                };
+
+                it["adds constructor"] = () => {
+                    cd.AddConstructor();
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        MyClass() {
+        }
+    }
+}");
+                };
+
+                it["adds multiple constructors"] = () => {
+                    cd.AddConstructor();
+                    cd.AddConstructor();
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        MyClass() {
+        }
+
+        MyClass() {
+        }
+    }
+}");
+                };
+
                 it["adds a property"] = () => {
                     cd.AddProperty(typeof(string), "name");
                     generates(cb, @"namespace MyNamespace {
     class MyClass {
         string name { get; set; }
+    }
+}");
+                };
+
+                it["adds constructor with body"] = () => {
+                    cd.AddConstructor("var x = 42;\nvar y = 24;");
+                    generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        MyClass() {
+            var x = 42;
+            var y = 24;
+        }
     }
 }");
                 };
@@ -181,6 +253,64 @@ System.Console.WriteLine(str);");
         }
     }
 }");
+                };
+
+                context["when constructor added"] = () => {
+
+                    ConstructorDescription ctor = null;
+                    before = () => {
+                        ctor = cd.AddConstructor("var x = 42;\nvar y = 24;");
+                    };
+
+                    it["adds modifiers"] = () => {
+                        ctor.AddModifier(AccessModifiers.Public);
+                        ctor.AddModifier(Modifiers.Override);
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        public override MyClass() {
+            var x = 42;
+            var y = 24;
+        }
+    }
+}");
+                    };
+
+                    it["adds a parameter"] = () => {
+                        ctor.AddParameter(new MethodParameterDescription(typeof(string), "name"));
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        MyClass(string name) {
+            var x = 42;
+            var y = 24;
+        }
+    }
+}");
+                    };
+
+                    it["adds parameters"] = () => {
+                        ctor.AddParameter(new MethodParameterDescription(typeof(string), "name"))
+                            .AddParameter(new MethodParameterDescription(typeof(int), "age"));
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        MyClass(string name, int age) {
+            var x = 42;
+            var y = 24;
+        }
+    }
+}");
+                    };
+
+                    it["calls base"] = () => {
+                        ctor.CallBase("42, 24");
+                        generates(cb, @"namespace MyNamespace {
+    class MyClass {
+        MyClass() : base(42, 24) {
+            var x = 42;
+            var y = 24;
+        }
+    }
+}");
+                    };
                 };
 
                 context["when property added"] = () => {
@@ -348,7 +478,7 @@ System.Console.WriteLine(str);");
 }");
                     };
 
-                    it["sets parameters"] = () => {
+                    it["adds parameters"] = () => {
                         md.AddParameter(new MethodParameterDescription(typeof(string), "name"))
                             .AddParameter(new MethodParameterDescription(typeof(int), "age"));
 
@@ -362,7 +492,7 @@ System.Console.WriteLine(str);");
 }");
                     };
 
-                    it["sets parameters with keyword"] = () => {
+                    it["adds parameters with keyword"] = () => {
                         md.AddParameter(new MethodParameterDescription(typeof(string), "name"))
                             .AddParameter(new MethodParameterDescription(typeof(int), "age").SetKeyword(MethodParameterKeyword.Out));
 

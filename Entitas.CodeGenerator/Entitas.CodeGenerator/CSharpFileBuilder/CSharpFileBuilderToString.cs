@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace Entitas.CodeGenerator {
         }
 
         string getNamespaces() {
-            const string FORMAT = @"namespace {0}";
+            const string FORMAT = "namespace {0}";
             var namespaces = _namespaceDescriptions.Aggregate(new List<string>(), (list, nsd) => {
                 var classes = getClasses(nsd);
                 if (!string.IsNullOrEmpty(nsd.name)) {
@@ -40,13 +41,26 @@ namespace Entitas.CodeGenerator {
         }
 
         static string getClasses(NamespaceDescription nsd) {
-            const string FORMAT = @"{0}class {1}";
+            const string FORMAT = "{0}class {1}";
             var classes = nsd.classDescriptions.Aggregate(new List<string>(), (list, cd) => {
+                var classDeclaration = string.Format(FORMAT, getModifiers(cd.modifiers), cd.name);
+                var inheritance = getInheritance(cd);
+                if (!string.IsNullOrEmpty(inheritance)) {
+                    classDeclaration += " : " + inheritance;
+                }
+
+                var constructors = getConstructors(cd);
                 var properties = getProperties(cd);
                 var fields = getFields(cd);
                 var methods = getMethods(cd);
 
-                var body = properties;
+                var body = constructors;
+
+                if (!string.IsNullOrEmpty(body) && !string.IsNullOrEmpty(properties)) {
+                    body += "\n\n";
+                }
+                body += properties;
+
                 if (!string.IsNullOrEmpty(body) && !string.IsNullOrEmpty(fields)) {
                     body += "\n\n";
                 }
@@ -57,11 +71,47 @@ namespace Entitas.CodeGenerator {
                 }
                 body += methods;
 
-                list.Add(codeBlock(string.Format(FORMAT, getModifiers(cd.modifiers), cd.name), body));
+                list.Add(codeBlock(classDeclaration, body));
                 return list;
             }).ToArray();
 
             return string.Join("\n\n", classes);
+        }
+
+        static string getInheritance(ClassDescription cd) {
+            var inheritedTypes = new List<Type>();
+            if (cd.baseClass != null) {
+                inheritedTypes.Add(cd.baseClass);
+            }
+            inheritedTypes.AddRange(cd.interfaces);
+
+            var inheritance = inheritedTypes.Aggregate(new List<string>(), (list, type) => {
+                list.Add(TypeGenerator.Generate(type));
+                return list;
+            }).ToArray();
+
+            return string.Join(", ", inheritance);
+        }
+
+        static string getConstructors(ClassDescription cd) {
+            if (cd.constructorDescriptions.Length == 0) {
+                return string.Empty;
+            }
+
+            const string FORMAT = "{0}{1}({2})";
+            const string FORMAT_BASE_CALL = " : base({0})";
+            var constructors = cd.constructorDescriptions.Aggregate(new List<string>(), (list, ctor) => {
+                var c = string.Format(FORMAT, getModifiers(ctor.modifiers), ctor.name, getParameters(ctor.parameters));
+                if (!string.IsNullOrEmpty(ctor.baseCall)) {
+                    c += string.Format(FORMAT_BASE_CALL, ctor.baseCall);
+                }
+
+                list.Add(codeBlock(c, ctor.body));
+                return list;
+            }).ToArray();
+
+            return string.Join("\n\n", constructors);
+
         }
 
         static string getProperties(ClassDescription cd) {
@@ -69,8 +119,8 @@ namespace Entitas.CodeGenerator {
                 return string.Empty;
             }
 
-            const string FORMAT_DEFAULT = @"{0}{1} {2} {{ get; set; }}";
-            const string FORMAT = @"{0}{1} {2}";
+            const string FORMAT_DEFAULT = "{0}{1} {2} {{ get; set; }}";
+            const string FORMAT = "{0}{1} {2}";
 
             var properties = cd.propertyDescriptions.Aggregate(new List<string>(), (list, pd) => {
                 var type = TypeGenerator.Generate(pd.type);
@@ -100,8 +150,8 @@ namespace Entitas.CodeGenerator {
                 return string.Empty;
             }
 
-            const string FORMAT = @"{0}{1} {2};";
-            const string FORMAT_WITH_VALUE = @"{0}{1} {2} = {3};";
+            const string FORMAT = "{0}{1} {2};";
+            const string FORMAT_WITH_VALUE = "{0}{1} {2} = {3};";
             var fields = cd.fieldDescriptions.Aggregate(new List<string>(), (list, fd) => {
                 var type = TypeGenerator.Generate(fd.type);
                 if (string.IsNullOrEmpty(fd.value)) {
@@ -121,27 +171,27 @@ namespace Entitas.CodeGenerator {
                 return string.Empty;
             }
 
-            const string FORMAT = @"{0}{1} {2}({3})";
+            const string FORMAT = "{0}{1} {2}({3})";
             var methods = cd.methodDescriptions.Aggregate(new List<string>(), (list, md) => {
                 var returnType = md.returnType == null
                     ? TypeGenerator.Generate(typeof(void))
                     : TypeGenerator.Generate(md.returnType);
 
-                list.Add(codeBlock(string.Format(FORMAT, getModifiers(md.modifiers), returnType, md.name, getParameters(md)), md.body));
+                list.Add(codeBlock(string.Format(FORMAT, getModifiers(md.modifiers), returnType, md.name, getParameters(md.parameters)), md.body));
                 return list;
             }).ToArray();
 
             return string.Join("\n\n", methods);
         }
 
-        static string getParameters(MethodDescription md) {
-            if (md.parameters == null || md.parameters.Length == 0) {
+        static string getParameters(MethodParameterDescription[] parameters) {
+            if (parameters == null || parameters.Length == 0) {
                 return string.Empty;
             }
 
-            const string FORMAT = @"{0}{1} {2}";
-            const string FORMAT_DEFAULT_VALUE = @"{0}{1} {2} = {3}";
-            var methods = md.parameters.Aggregate(new List<string>(), (list, p) => {
+            const string FORMAT = "{0}{1} {2}";
+            const string FORMAT_DEFAULT_VALUE = "{0}{1} {2} = {3}";
+            var methods = parameters.Aggregate(new List<string>(), (list, p) => {
                 var keyword = string.IsNullOrEmpty(p.keyword)
                     ? string.Empty
                     : p.keyword + " ";
