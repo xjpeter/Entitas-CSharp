@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Entitas;
 
 public class ProcessRandomValueSystem : IReactiveSystem, ISetPool {
+
     public TriggerOnEvent trigger { get { return VisualDebuggingMatcher.MyFloat.OnEntityAdded(); } }
 
     Pool _pool;
@@ -11,9 +12,8 @@ public class ProcessRandomValueSystem : IReactiveSystem, ISetPool {
     }
 
     public void Execute(List<Entity> entities) {
-        foreach (var e in entities) {
+        foreach(var e in entities) {
             _pool.DestroyEntity(e);
         }
     }
 }
-

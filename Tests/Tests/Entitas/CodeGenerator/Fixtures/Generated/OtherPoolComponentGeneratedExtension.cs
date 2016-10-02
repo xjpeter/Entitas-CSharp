@@ -9,9 +9,10 @@
 using Entitas;
 
 namespace Entitas {
-    public partial class Entity {
-        public OtherPoolComponent otherPool { get { return (OtherPoolComponent)GetComponent(OtherComponentIds.OtherPool); } }
 
+    public partial class Entity {
+
+        public OtherPoolComponent otherPool { get { return (OtherPoolComponent)GetComponent(OtherComponentIds.OtherPool); } }
         public bool hasOtherPool { get { return HasComponent(OtherComponentIds.OtherPool); } }
 
         public Entity AddOtherPool(System.DateTime newTimestamp, bool newIsLoggedIn) {
@@ -35,14 +36,13 @@ namespace Entitas {
     }
 
     public partial class Pool {
+
         public Entity otherPoolEntity { get { return GetGroup(OtherMatcher.OtherPool).GetSingleEntity(); } }
-
         public OtherPoolComponent otherPool { get { return otherPoolEntity.otherPool; } }
-
         public bool hasOtherPool { get { return otherPoolEntity != null; } }
 
         public Entity SetOtherPool(System.DateTime newTimestamp, bool newIsLoggedIn) {
-            if (hasOtherPool) {
+            if(hasOtherPool) {
                 throw new EntitasException("Could not set otherPool!\n" + this + " already has an entity with OtherPoolComponent!",
                     "You should check if the pool already has a otherPoolEntity before setting it or use pool.ReplaceOtherPool().");
             }
@@ -53,7 +53,7 @@ namespace Entitas {
 
         public Entity ReplaceOtherPool(System.DateTime newTimestamp, bool newIsLoggedIn) {
             var entity = otherPoolEntity;
-            if (entity == null) {
+            if(entity == null) {
                 entity = SetOtherPool(newTimestamp, newIsLoggedIn);
             } else {
                 entity.ReplaceOtherPool(newTimestamp, newIsLoggedIn);
@@ -69,11 +69,12 @@ namespace Entitas {
 }
 
     public partial class OtherMatcher {
+
         static IMatcher _matcherOtherPool;
 
         public static IMatcher OtherPool {
             get {
-                if (_matcherOtherPool == null) {
+                if(_matcherOtherPool == null) {
                     var matcher = (Matcher)Matcher.AllOf(OtherComponentIds.OtherPool);
                     matcher.componentNames = OtherComponentIds.componentNames;
                     _matcherOtherPool = matcher;

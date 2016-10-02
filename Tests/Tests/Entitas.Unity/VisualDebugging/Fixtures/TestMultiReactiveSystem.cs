@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Entitas;
 
 public class TestMultiReactiveSystem : IMultiReactiveSystem {
+
     public TriggerOnEvent[] triggers {
         get {
             return new [] {

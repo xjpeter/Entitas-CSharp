@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Entitas</RootNamespace>
     <AssemblyName>Entitas</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ReleaseVersion>1.0.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -40,7 +40,7 @@
     <Compile Include="Entitas\Interfaces\ISystem.cs" />
     <Compile Include="Entitas\Pool.cs" />
     <Compile Include="Entitas\Extensions\PoolExtension.cs" />
-    <Compile Include="Entitas\GroupObserver.cs" />
+    <Compile Include="Entitas\EntityCollector.cs" />
     <Compile Include="Entitas\Extensions\GroupExtension.cs" />
     <Compile Include="Entitas\Interfaces\IReactiveSystem.cs" />
     <Compile Include="Entitas\ReactiveSystem.cs" />
@@ -81,6 +81,21 @@
     <Compile Include="Entitas\CodeGenerator\Generators\BlueprintsGenerator.cs" />
     <Compile Include="Entitas\CodeGenerator\Interfaces\IBlueprintsCodeGenerator.cs" />
     <Compile Include="Entitas\CodeGenerator\Attributes\CustomComponentNameAttribute.cs" />
+    <Compile Include="Entitas\Serialization\Configuration\CodeGeneratorConfig.cs" />
+    <Compile Include="Entitas\Serialization\Configuration\EntitasPreferencesConfig.cs" />
+    <Compile Include="Entitas\Serialization\Configuration\EntitasPreferences.cs" />
+    <Compile Include="Entitas\Serialization\Configuration\Properties.cs" />
+    <Compile Include="Entitas\Serialization\Blueprints\HideInBlueprintInspectorAttribute.cs" />
+    <Compile Include="Entitas\EntityIndex.cs" />
+    <Compile Include="Entitas\CodeGenerator\Attributes\IndexKeyAttribute.cs" />
+    <Compile Include="Entitas\Pools.cs" />
+    <Compile Include="Entitas\Interfaces\ICleanupSystem.cs" />
+    <Compile Include="Entitas\Interfaces\ITearDownSystem.cs" />
+    <Compile Include="Entitas\Extensions\EntityExtension.cs" />
+    <Compile Include="Entitas\CodeGenerator\Generators\OldPoolsGenerator.cs" />
+    <Compile Include="Entitas\Caching\ObjectCache.cs" />
+    <Compile Include="Entitas\Caching\ObjectPool.cs" />
+    <Compile Include="Entitas\Caching\EntitasCache.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -95,5 +110,7 @@
     <Folder Include="Entitas\CodeGenerator\Intermediate\" />
     <Folder Include="Entitas\CodeGenerator\Providers\" />
     <Folder Include="Entitas\Serialization\Blueprints\" />
+    <Folder Include="Entitas\Serialization\Configuration\" />
+    <Folder Include="Entitas\Caching\" />
   </ItemGroup>
 </Project>

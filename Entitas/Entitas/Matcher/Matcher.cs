@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Entitas;
 
 namespace Entitas {
+
     public partial class Matcher : IAllOfMatcher, IAnyOfMatcher, INoneOfMatcher {
+
         public int[] indices {
             get {
-                if (_indices == null) {
+                if(_indices == null) {
                     _indices = mergeIndices();
                 }
                 return _indices;
@@ -21,6 +22,8 @@ namespace Entitas {
         int[] _allOfIndices;
         int[] _anyOfIndices;
         int[] _noneOfIndices;
+
+        MatcherFilter _filter;
 
         Matcher() {
         }
@@ -45,37 +48,43 @@ namespace Entitas {
             return NoneOf(mergeIndices(matchers));
         }
 
+        public IMatcher Where(MatcherFilter filter) {
+            _filter = filter;
+            return this;
+        }
+
         public bool Matches(Entity entity) {
-            var matchesAllOf = _allOfIndices == null || entity.HasComponents(_allOfIndices);
-            var matchesAnyOf = _anyOfIndices == null || entity.HasAnyComponent(_anyOfIndices);
-            var matchesNoneOf = _noneOfIndices == null || !entity.HasAnyComponent(_noneOfIndices);
-            return matchesAllOf && matchesAnyOf && matchesNoneOf;
+            return (_allOfIndices == null || entity.HasComponents(_allOfIndices))
+                && (_anyOfIndices == null || entity.HasAnyComponent(_anyOfIndices))
+                && (_noneOfIndices == null || !entity.HasAnyComponent(_noneOfIndices))
+                && (_filter == null || _filter(entity));
         }
 
         int[] mergeIndices() {
-            var totalIndices = (_allOfIndices != null ? _allOfIndices.Length : 0)
-                               + (_anyOfIndices != null ? _anyOfIndices.Length : 0)
-                               + (_noneOfIndices != null ? _noneOfIndices.Length : 0);
+            var indicesList = EntitasCache.GetIntList();
 
-            var indicesList = new List<int>(totalIndices);
-            if (_allOfIndices != null) {
-                indicesList.AddRange(_allOfIndices);
-            }
-            if (_anyOfIndices != null) {
-                indicesList.AddRange(_anyOfIndices);
-            }
-            if (_noneOfIndices != null) {
-                indicesList.AddRange(_noneOfIndices);
-            }
+                if(_allOfIndices != null) {
+                    indicesList.AddRange(_allOfIndices);
+                }
+                if(_anyOfIndices != null) {
+                    indicesList.AddRange(_anyOfIndices);
+                }
+                if(_noneOfIndices != null) {
+                    indicesList.AddRange(_noneOfIndices);
+                }
 
-            return distinctIndices(indicesList);
+                var mergedIndices = distinctIndices(indicesList);
+
+            EntitasCache.PushIntList(indicesList);
+
+            return mergedIndices;
         }
 
         static int[] mergeIndices(IMatcher[] matchers) {
             var indices = new int[matchers.Length];
-            for (int i = 0, matchersLength = matchers.Length; i < matchersLength; i++) {
+            for (int i = 0; i < matchers.Length; i++) {
                 var matcher = matchers[i];
-                if (matcher.indices.Length != 1) {
+                if(matcher.indices.Length != 1) {
                     throw new MatcherException(matcher);
                 }
                 indices[i] = matcher.indices[0];
@@ -85,9 +94,9 @@ namespace Entitas {
         }
 
         static string[] getComponentNames(IMatcher[] matchers) {
-            for (int i = 0, matchersLength = matchers.Length; i < matchersLength; i++) {
+            for (int i = 0; i < matchers.Length; i++) {
                 var matcher = matchers[i] as Matcher;
-                if (matcher != null && matcher.componentNames != null) {
+                if(matcher != null && matcher.componentNames != null) {
                     return matcher.componentNames;
                 }
             }
@@ -97,16 +106,23 @@ namespace Entitas {
 
         static void setComponentNames(Matcher matcher, IMatcher[] matchers) {
             var componentNames = getComponentNames(matchers);
-            if (componentNames != null) {
+            if(componentNames != null) {
                 matcher.componentNames = componentNames;
             }
         }
 
-        static int[] distinctIndices(IEnumerable<int> indices) {
-            var indicesSet = new HashSet<int>(indices);
-            var uniqueIndices = new int[indicesSet.Count];
-            indicesSet.CopyTo(uniqueIndices);
-            Array.Sort(uniqueIndices);
+        static int[] distinctIndices(IList<int> indices) {
+            var indicesSet = EntitasCache.GetIntHashSet();
+
+                foreach(var index in indices) {
+                    indicesSet.Add(index);
+                }
+                var uniqueIndices = new int[indicesSet.Count];
+                indicesSet.CopyTo(uniqueIndices);
+                Array.Sort(uniqueIndices);
+
+            EntitasCache.PushIntHashSet(indicesSet);
+
             return uniqueIndices;
         }
     }
@@ -116,4 +132,3 @@ namespace Entitas {
         }
     }
 }
-

@@ -7,9 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 namespace Entitas {
-    public partial class Entity {
-        public ComponentWithFieldsAndProperties componentWithFieldsAndProperties { get { return (ComponentWithFieldsAndProperties)GetComponent(ComponentIds.ComponentWithFieldsAndProperties); } }
 
+    public partial class Entity {
+
+        public ComponentWithFieldsAndProperties componentWithFieldsAndProperties { get { return (ComponentWithFieldsAndProperties)GetComponent(ComponentIds.ComponentWithFieldsAndProperties); } }
         public bool hasComponentWithFieldsAndProperties { get { return HasComponent(ComponentIds.ComponentWithFieldsAndProperties); } }
 
         public Entity AddComponentWithFieldsAndProperties(string newPublicField, string newPublicProperty) {
@@ -33,11 +34,12 @@ namespace Entitas {
     }
 
     public partial class Matcher {
+
         static IMatcher _matcherComponentWithFieldsAndProperties;
 
         public static IMatcher ComponentWithFieldsAndProperties {
             get {
-                if (_matcherComponentWithFieldsAndProperties == null) {
+                if(_matcherComponentWithFieldsAndProperties == null) {
                     var matcher = (Matcher)Matcher.AllOf(ComponentIds.ComponentWithFieldsAndProperties);
                     matcher.componentNames = ComponentIds.componentNames;
                     _matcherComponentWithFieldsAndProperties = matcher;

@@ -7,15 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 public static class OtherComponentIds {
-    public const int OtherPool = 0;
 
-    public const int TotalComponents = 1;
+    public const int OtherPool = 0;
+    public const int MultiplePoolAndDefaultPool = 2;
+
+    public const int TotalComponents = 3;
 
     public static readonly string[] componentNames = {
-        "OtherPool"
+        "OtherPool",
+        null,
+        "MultiplePoolAndDefaultPool"
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(OtherPoolComponent)
+        typeof(OtherPoolComponent),
+        null,
+        typeof(MultiplePoolAndDefaultPoolComponent)
     };
 }

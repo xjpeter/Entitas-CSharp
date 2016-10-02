@@ -6,35 +6,50 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using Entitas;
+namespace Entitas {
 
-public static class Pools {
+    public partial class Pools {
 
-    static Pool[] _allPools;
-
-    public static Pool[] allPools {
-        get {
-            if (_allPools == null) {
-                _allPools = new [] { pool };
-            }
-
-            return _allPools;
+        public static Pool CreateOtherPoolPool() {
+            return CreatePool("OtherPool", OtherPoolComponentIds.TotalComponents, OtherPoolComponentIds.componentNames, OtherPoolComponentIds.componentTypes);
         }
-    }
 
-    static Pool _pool;
+        public static Pool CreatePoolAPool() {
+            return CreatePool("PoolA", PoolAComponentIds.TotalComponents, PoolAComponentIds.componentNames, PoolAComponentIds.componentTypes);
+        }
 
-    public static Pool pool {
-        get {
-            if (_pool == null) {
-                _pool = new Pool(ComponentIds.TotalComponents, 0, new PoolMetaData("Pool", ComponentIds.componentNames, ComponentIds.componentTypes));
-                #if (!ENTITAS_DISABLE_VISUAL_DEBUGGING && UNITY_EDITOR)
-                var poolObserver = new Entitas.Unity.VisualDebugging.PoolObserver(_pool);
-                UnityEngine.Object.DontDestroyOnLoad(poolObserver.entitiesContainer);
-                #endif
-            }
+        public static Pool CreatePoolBPool() {
+            return CreatePool("PoolB", PoolBComponentIds.TotalComponents, PoolBComponentIds.componentNames, PoolBComponentIds.componentTypes);
+        }
 
-            return _pool;
+        public static Pool CreatePoolCPool() {
+            return CreatePool("PoolC", PoolCComponentIds.TotalComponents, PoolCComponentIds.componentNames, PoolCComponentIds.componentTypes);
+        }
+
+        public static Pool CreateSomeOtherPoolPool() {
+            return CreatePool("SomeOtherPool", SomeOtherPoolComponentIds.TotalComponents, SomeOtherPoolComponentIds.componentNames, SomeOtherPoolComponentIds.componentTypes);
+        }
+
+        public static Pool CreateSomePoolPool() {
+            return CreatePool("SomePool", SomePoolComponentIds.TotalComponents, SomePoolComponentIds.componentNames, SomePoolComponentIds.componentTypes);
+        }
+
+        public Pool[] allPools { get { return new [] { otherPool, poolA, poolB, poolC, someOtherPool, somePool }; } }
+
+        public Pool otherPool;
+        public Pool poolA;
+        public Pool poolB;
+        public Pool poolC;
+        public Pool someOtherPool;
+        public Pool somePool;
+
+        public void SetAllPools() {
+            otherPool = CreateOtherPoolPool();
+            poolA = CreatePoolAPool();
+            poolB = CreatePoolBPool();
+            poolC = CreatePoolCPool();
+            someOtherPool = CreateSomeOtherPoolPool();
+            somePool = CreateSomePoolPool();
         }
     }
 }

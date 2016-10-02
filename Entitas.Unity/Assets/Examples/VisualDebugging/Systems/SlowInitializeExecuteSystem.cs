@@ -1,7 +1,8 @@
-﻿using Entitas;
+using Entitas;
 using System.Threading;
 
 public class SlowInitializeExecuteSystem : IInitializeSystem, IExecuteSystem {
+
     public void Initialize() {
         Thread.Sleep(10);
     }
@@ -10,4 +11,3 @@ public class SlowInitializeExecuteSystem : IInitializeSystem, IExecuteSystem {
         Thread.Sleep(5);
     }
 }
-

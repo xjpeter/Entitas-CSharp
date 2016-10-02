@@ -5,19 +5,17 @@
 ---
 
 <p align="center">
-
-    <a>If you love Entitas as much as we do<br />consider pressing this button</a>
+    <a>If you love Entitas as much as we do<br />please support the development</a>
 
     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BTMLSDQULZ852">
         <img src="https://raw.githubusercontent.com/sschmid/Entitas-CSharp/master/Readme/Images/Donate-PayPal.gif" alt="Thank you!"></a>
-
 </p>
 
 ---
 
 <p align="center">
     <a href="https://gitter.im/sschmid/Entitas-CSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
-        <img src="https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg" alt="Join the chat at https://gitter.im/sschmid/Entitas-CSharp"></a>
+        <img src="https://img.shields.io/badge/chat-on%20gitter-brightgreen.svg" alt="Join the chat at https://gitter.im/sschmid/Entitas-CSharp"></a>
 
     <a href="https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2FEntitas-CSharp&screen_name=s_schmid&tw_p=followbutton">
         <img src="https://img.shields.io/badge/twitter-follow%20%40s__schmid-blue.svg" alt="Twitter Follow Me"></a>
@@ -45,8 +43,6 @@ Entitas is a super fast Entity Component System Framework (ECS) specifically mad
         <img src="https://raw.githubusercontent.com/sschmid/Entitas-CSharp/master/Readme/Images/MadeForUnity.png" alt="Unity3d" height="64"></a>
     <a href="http://unity3d.com/unite/archive/2015">
         <img src="https://raw.githubusercontent.com/sschmid/Entitas-CSharp/master/Readme/Images/UniteEurope2015.png" alt="Unite Europe 2015" height="64"></a>
-    <a href="http://unity3d.com/unite/archive/2015">
-        <img src="https://raw.githubusercontent.com/sschmid/Entitas-CSharp/master/Readme/Images/UniteBoston2015.png" alt="Unite Boston 2015" height="64"></a>
     <a href="https://unite.unity.com/2016/europe">
         <img src="https://raw.githubusercontent.com/sschmid/Entitas-CSharp/master/Readme/Images/UniteEurope2016.png" alt="Unite Europe 2016" height="64"></a>
     <a href="https://www.wooga.com">
@@ -55,10 +51,11 @@ Entitas is a super fast Entity Component System Framework (ECS) specifically mad
 
 ---
 
+### **[» Ask a question][ask-a-question]**
 ### **[» Wiki, Overview, Roadmap and example projects][wiki]**
 ### **[» Community: Games and Examples #madeWithEntitas][wiki-games-and-examples]**
-### **[» Ask a question][ask-a-question]**
 
+---
 
 Videos
 ======
@@ -103,7 +100,7 @@ Entitas is fast, light and gets rid of unnecessary complexity. There are less th
 - Entity
 - Pool
 - Group
-- Group Observer
+- Entity Collector
 
 [Read more...][wiki-overview]
 
@@ -133,7 +130,7 @@ The optional Unity module integrates Entitas nicely into Unity and provides powe
 Entitas deep dive
 =================
 
-[Read the wiki][wiki] or checkout the awesome [example projects][wiki-example-projects] to see Entitas in action. These example projects illustrate how systems, groups, observers and entities all play together seamlessly.
+[Read the wiki][wiki] or checkout the awesome [example projects][wiki-example-projects] to see Entitas in action. These example projects illustrate how systems, groups, collectors and entities all play together seamlessly.
 
 
 Download Entitas
@@ -153,9 +150,9 @@ Contributing to Entitas
 
 The project is hosted on [GitHub][github-entitas] where you can [report issues][issues], fork the project and [submit pull requests][pulls].
 
-Entitas.sln contains all projects and tests in one solution. Run Build/build.sh to copy all required Entitas source files to all Unity projects.
+Entitas.sln contains all projects and tests in one solution. Run Scripts/build.sh to copy all required Entitas source files to all Unity projects.
 
-To run the tests, navigate to the project root folder and execute Build/runTests.sh.
+To run the tests, navigate to the project root folder and execute Scripts/runTests.sh.
 
 - Check the [issues][issues] to make sure nobody hasn't already requested it and/or contributed it
 - Fork the project
@@ -186,10 +183,12 @@ Entitas is available in
 - [Swift](https://github.com/mzaks/Entitas-Swift)
 - [C++](https://github.com/JuDelCo/Entitas-Cpp)
 - [Objective-C](https://github.com/wooga/entitas)
-- [Go](https://github.com/wooga/go-entitas)
-- [F#](https://github.com/darkoverlordofdata/Bosco.ECS)
-- [TypeScript](https://github.com/darkoverlordofdata/entitas-ts)
 - [Java](https://github.com/Rubentxu/entitas-java)
+- [Scala](https://github.com/darkoverlordofdata/entitas-scala)
+- [Go](https://github.com/wooga/go-entitas)
+- [F#](https://github.com/darkoverlordofdata/entitas-fsharp)
+- [TypeScript](https://github.com/darkoverlordofdata/entitas-ts)
+- [Kotlin](https://github.com/darkoverlordofdata/entitas-kotlin)
 - [Haskell](https://github.com/mhaemmerle/entitas-haskell)
 - [Erlang](https://github.com/mhaemmerle/entitas_erl)
 - [Clojure](https://github.com/mhaemmerle/entitas-clj)

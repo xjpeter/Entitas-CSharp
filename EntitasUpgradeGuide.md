@@ -35,6 +35,31 @@ etc...
 $ mono MigrationAssistant.exe 0.26.0 /Path/To/Project/Generated/
 ```
 
+# Entitas 0.34.0 upgrade guide
+#### Before you install
+- Rename `GroupObserver` to `EntityCollector`
+- Rename `.CreateGroupObserver()` to `.CreateEntityCollector()`
+- Rename `IGroupObserverSystem` to `IEntityCollectorSystem`
+- Find & Replace `public EntityCollector groupObserver` with `public EntityCollector entityCollector`
+
+#### After you intalled
+- You're fine - nothing to do for you :heart:
+
+
+# Entitas 0.33.0 upgrade guide
+#### Before you install
+- Manually rename `IDeinitializeSystem` to `ITearDownSystem`
+
+#### After you intalled
+- You're fine - nothing to do for you :heart:
+
+
+# Entitas 0.32.0 upgrade guide
+Use the command line tool `MigrationAssistant.exe` to automatically fix compile errors.
+Entitas 0.32.0 introduces a new Pools class. Using the new PoolsGenerator will require
+to update your existing project manually. You can still use the old Pools class in your
+existing project if you want. If so, please use the OldPoolsGenerator instead of the new one.
+
 
 # Entitas 0.30.0 upgrade guide
 Some code generators got renamed. Apply Migration 0.30.0
